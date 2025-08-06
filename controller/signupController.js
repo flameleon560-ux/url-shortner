@@ -1,31 +1,61 @@
-const UserModel = require("../model/signupModel"); // avoid naming conflict
+const User = require("../model/signupModel"); // avoid naming conflict
 
-exports.addUser = async (req, res) => {
+// exports.addUser = async (req, res) => {
+//     try {
+//         const { username, password, email } = req.body;
+
+//         if (!username || !password || !email) {
+//             return res.status(400).json({ error: "All fields are required" });
+//         }
+
+//         const newUser = new UserModel({ username, password, email });
+//         await newUser.save();
+
+//         res.status(201).json(newUser);
+//     } catch (error) {
+//         res.status(500).json({ error: "Failed to create user", details: error.message });
+//     }
+// };
+
+
+async function handleUserSignup(req, res) {
+    const { username, email, password } = req.body;
+    await User.create({
+        username,
+        email,
+        password,
+    });
+    return res.redirect('/');
+
+}
+
+
+
+
+
+async function handleUserLogin(req, res) {
+    const { username, password } = req.body;
+
     try {
-        const { username, password, email } = req.body;
+        const user = await User.findOne({ username, password });
 
-        if (!username || !password || !email) {
-            return res.status(400).json({ error: "All fields are required" });
+        if (!user) {
+            return res.render('login', {
+                error: "Invalid Username or Password",
+            });
         }
 
-        const newUser = new UserModel({ username, password, email });
-        await newUser.save();
 
-        res.status(201).json(newUser);
+
+        // ✅ Login successful, redirect to homepage
+        return res.redirect('/');
+
     } catch (error) {
-        res.status(500).json({ error: "Failed to create user", details: error.message });
+        console.error("Login error:", error);
+        return res.status(500).render('login', {
+            error: "Something went wrong. Please try again.",
+        });
     }
-};
+}
 
-
-// async function handleUserSignup(req, res) {
-//     const { name, email, password } = req.body;
-//     const User = await UserActivation.create({
-//         name,
-//         email,
-//         password,
-//     });
-//     res.send(user)
-//     // return res.redirect('/')
-// }
-// module.exports = handleUserSignup
+module.exports = { handleUserSignup, handleUserLogin }

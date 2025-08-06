@@ -4,6 +4,7 @@ const dotenv = require('dotenv');
 const path = require('path');
 const urlRoute = require('./routes/urlroutes');
 const signUproutes = require('./routes/signupROutes')
+const staticRoute = require('./routes/staticRouter')
 
 dotenv.config();
 
@@ -23,6 +24,7 @@ app.use(express.urlencoded({ extended: true })); // required for form parsing
 
 app.use("/url", urlRoute);
 app.use("/user", signUproutes);
+app.use('/', staticRoute);
 
 mongoose.connect(MONGO_URI)
     .then(() => console.log('✅ Connected to MongoDB'))

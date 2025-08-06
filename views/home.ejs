@@ -16,7 +16,7 @@
 <body>
     <h1>URL Shortener</h1>
 
-    <% if (id) { %>
+    <% if (locals.id) { %>
         <p>URL Generated: <a href="http://localhost:3005/url/<%= id %>">
                 http://localhost:3005/url/<%= id %></a></p>
         <% } %>
