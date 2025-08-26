@@ -5,11 +5,13 @@ const router = express.Router();
 
 router.get('/', async (req, res) => {
     try {
+      if (!req.user) return res.redirect("/login");
+
         const allUrls = await URL.find({});
 
         // Send a response only once
         return res.render("home", {
-            urls: allUrls,
+            url: allUrls,
 
         });
 

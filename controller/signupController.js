@@ -1,25 +1,15 @@
 const User = require("../model/signupModel"); // avoid naming conflict
 
-// exports.addUser = async (req, res) => {
-//     try {
-//         const { username, password, email } = req.body;
-
-//         if (!username || !password || !email) {
-//             return res.status(400).json({ error: "All fields are required" });
-//         }
-
-//         const newUser = new UserModel({ username, password, email });
-//         await newUser.save();
-
-//         res.status(201).json(newUser);
-//     } catch (error) {
-//         res.status(500).json({ error: "Failed to create user", details: error.message });
-//     }
-// };
+const { v4: uuidv4 } = require("uuid");
+const { setUser} = require("../services/auth");
 
 
 async function handleUserSignup(req, res) {
     const { username, email, password } = req.body;
+     if (!username || !password || !email) {
+            return res.status(400).json({ error: "All fields are required" });
+        }
+
     await User.create({
         username,
         email,
@@ -30,32 +20,19 @@ async function handleUserSignup(req, res) {
 }
 
 
-
-
-
 async function handleUserLogin(req, res) {
-    const { username, password } = req.body;
+  const { username, password } = req.body;
+  const user = await User.findOne({ username, password });
 
-    try {
-        const user = await User.findOne({ username, password });
+  if (!user)
+    return res.render("login", {
+      error: "Invalid Username or Password",
+    });
 
-        if (!user) {
-            return res.render('login', {
-                error: "Invalid Username or Password",
-            });
-        }
-
-
-
-        // ✅ Login successful, redirect to homepage
-        return res.redirect('/');
-
-    } catch (error) {
-        console.error("Login error:", error);
-        return res.status(500).render('login', {
-            error: "Something went wrong. Please try again.",
-        });
-    }
+  const sessionId = uuidv4();
+  setUser(sessionId, user);
+  res.cookie("uid", sessionId);
+  return res.redirect("/");
 }
 
 module.exports = { handleUserSignup, handleUserLogin }

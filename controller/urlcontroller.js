@@ -1,23 +1,27 @@
 const Url = require('../model/urlmodel');
 const { nanoid } = require('nanoid');
 
-exports.renderForm = (req, res) => {
-    res.render('home', { id: null });
-};
+
 
 exports.createShortUrl = async (req, res) => {
     try {
-        const { url } = req.body;
-        const id = nanoid(6);
+        const { originalUrl } = req.body;
+        const shortId = nanoid(6);
 
-        await Url.create({ originalUrl: url, shortId: id });
+        await Url.create({ originalUrl: originalUrl, shortId: shortId });
 
-        res.render('home', { id }); // Renders page with short link
+        // Fetch all URLs again
+        const allUrls = await Url.find({});
+        
+        // Pass both id and url list
+        // res.status(201).json({ id });
+        res.render('home', { shortId, url: allUrls });
     } catch (err) {
-        console.error('❌ Error creating short URL:', err.message);
+        console.error('Error creating short URL:', err.message);
         res.status(500).send('Internal Server Error');
     }
 };
+
 
 exports.redirectUrl = async (req, res) => {
     try {
