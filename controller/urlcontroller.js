@@ -8,10 +8,10 @@ exports.createShortUrl = async (req, res) => {
         const { originalUrl } = req.body;
         const shortId = nanoid(6);
 
-        await Url.create({ originalUrl: originalUrl, shortId: shortId });
+        await Url.create({ originalUrl: originalUrl, shortId: shortId ,createdBy: req.user._id});
 
         // Fetch all URLs again
-        const allUrls = await Url.find({});
+        const allUrls = await Url.find({ createdBy: req.user._id });
         
         // Pass both id and url list
         // res.status(201).json({ id });
