@@ -6,7 +6,7 @@ const cookieParser = require("cookie-parser");
 const urlRoute = require('./routes/urlroutes'); 
 const signUproutes = require('./routes/signupROutes')
 const staticRoute = require('./routes/staticRouter')
-const { restrictToLoggedinUserOnly,checkAuth} = require("./middlewares/auth");
+const { checkAuthentication,restrictTo} = require("./middlewares/auth");
 
 
 dotenv.config();
@@ -16,7 +16,7 @@ const PORT = process.env.PORT || 5000;
 const MONGO_URI = process.env.MONGO_URI;
 
 if (!MONGO_URI) {
-    console.error('❌ MONGO_URI missing from .env');
+    console.error('MONGO_URI missing from .env');
     process.exit(1);
 }
 
@@ -25,10 +25,12 @@ app.set("views", path.resolve("./views"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser()); // required for form parsing
+app.use(checkAuthentication)
+
 app.use("/user", signUproutes,);
 
-app.use("/url",restrictToLoggedinUserOnly,urlRoute);
-app.use("/",checkAuth, staticRoute);
+app.use("/url",restrictTo(["NORMAL","ADMIN"]),urlRoute);
+app.use("/", staticRoute);
 
 
 mongoose.connect(MONGO_URI)
