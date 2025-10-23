@@ -15,14 +15,18 @@
 
 <body>
     <h1>Signup</h1>
-    <form action="/user/createuser" method="post">
+    <% if(error){%>
+    <p style="color:red;"><%= error %></p>
+    <% } %>
+    <form action="/user/createuser" method="post" enctype="multipart/form-data">
         <label>Username</label>
         <input type="text" required name="username">
         <label>Email</label>
         <input type="text" required name="email">
         <label>Password</label>
         <input type="text" required name="password">
-
+        <label>profile</label>
+        <input type="file" name="profile" required>
         <button type="submit">Signup</button>
     </form>
 

@@ -36,7 +36,8 @@ router.get('/',restrictTo(["NORMAL","ADMIN"]), async (req, res) => {
         // Send a response only once
         return res.render("home", {
             url: allUrls,
-
+            // message:"welcome to url shortner"
+            message:`welcome ${req.user.username}`
         });
 
         // Or if you want to return JSON instead:
@@ -54,11 +55,14 @@ router.get('/',restrictTo(["NORMAL","ADMIN"]), async (req, res) => {
 
 
 router.get('/signup', (req, res) => {
-    return res.render('Signup');
+    return res.render('signup',{error:null});
 })
 router.get('/login', (req, res) => {
-    return res.render('login');
+    return res.render('login',{error:null,message:null});
 });
+router.get('/forgotpassword',(req,res)=>{
+    return res.render('forgotpassword');
+})
 
 
 module.exports = router

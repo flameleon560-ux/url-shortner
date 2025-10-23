@@ -30,6 +30,9 @@
 </head>
 
 <body>
+     <% if(message){%>
+    <p style="color:green"><%= message %></p>
+    <% } %>
     <h1>URL Shortener</h1>
 
     <% if (locals.shortId) { %>
